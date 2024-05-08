@@ -1,6 +1,7 @@
 import React from 'react'
 import Select from 'react-select';
 import MemDataService from '../services/MemDataService'
+import MyComponent from './MyComponent';
 
 
 function Memdata() {
@@ -24,6 +25,7 @@ function Memdata() {
   return (
     <>
       <div>Memdata</div>
+      <MyComponent />
       <div className='grid grid-cols-2'>
         <div>
           <Select options={data} onChange={handleChange} value={memID} />
@@ -34,6 +36,7 @@ function Memdata() {
         </pre>
 
       </div>
+    
 
 
     </>

@@ -1,0 +1,263 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model billsettings {
+  ID        Int     @id(map: "PK_billsettings") @default(autoincrement())
+  Header    String? @db.VarChar(50)
+  FieldName String? @db.VarChar(15)
+  FLen      Int?
+  FAlign    String? @db.VarChar(1)
+  Fprefix   String? @db.VarChar(10)
+  Fsufix    String? @db.VarChar(10)
+  Forder    Int?
+  FFormat   String? @db.VarChar(10)
+}
+
+model memdata {
+  MEMID         Int      @id(map: "PK_db_empdata") @default(autoincrement())
+  MEMTYPE       String?  @db.VarChar(50)
+  GNO           Int?
+  CustID        Int?     @default(0, map: "DF_memdata_CustID")
+  Genlno        String?  @db.VarChar(50)
+  Name          String?  @db.VarChar(50)
+  Rank          String?  @db.VarChar(50)
+  Station       String?  @db.VarChar(50)
+  Company       String?  @db.VarChar(50)
+  Status        String?  @db.VarChar(50)
+  MonthLimit    Int?     @default(0, map: "DF_db_empdata_climit")
+  PurchaseLimit Int?     @default(0, map: "DF_memdata_PurchaseLimit")
+  Phone         String?  @db.VarChar(50)
+  Userlevel     String?  @db.VarChar(50)
+  password      String?  @db.VarChar(50)
+  Phone1        String?  @db.VarChar(50)
+  AnnualLimit   Decimal? @default(0, map: "DF__memdata__AnnualL__5CC1BC92") @db.Decimal(18, 3)
+  cashbook  CashBook[]
+}
+
+
+model CashBook {
+  CBID        Int       @id(map: "PK_CashBooks") @default(autoincrement())
+  CBDT        DateTime? @db.DateTime
+  BillNo      String?   @default("0", map: "DF_CashBook_BillNo") @db.VarChar(50)
+  BillDt      DateTime? @db.DateTime
+  TransTypeID Int?
+  HA          Int?
+  Amt         Decimal?  @default(0, map: "DF_CashBook_Amt") @db.Decimal(18, 2)
+  CBAmt       Decimal?  @default(0, map: "DF_CashBook_CBAmt") @db.Decimal(18, 2)
+  CrAmt       Decimal?  @default(0, map: "DF_CashBook_CrAmt") @db.Decimal(18, 2)
+  Bank        Decimal?  @default(0, map: "DF_CashBook_Bank") @db.Decimal(18, 2)
+  Paytype     String?   @db.VarChar(50)
+  memdata      memdata? @relation(fields: [MEMID], references: [MEMID])
+  MEMID       Int?
+  Name        String?   @db.VarChar(50)
+  UserID      Int?
+  dateStamp   DateTime? @default(now(), map: "DF_CashBook_dateStamp") @db.DateTime
+  Refdetails  String?   @db.VarChar(50)
+  Refdetails1 String?   @db.VarChar(50)
+  Remarks     String?   @db.VarChar(50)
+  Wallet      Decimal?  @default(0, map: "DF_CashBook_Wallet") @db.Decimal(18, 2)
+  PayTypeID   Int?      @default(0, map: "DF__CashBook__PayTyp__33D4B598")
+  Bank_SC     Decimal?  @default(0, map: "DF__CashBook__Bank_S__34C8D9D1") @db.Decimal(18, 2)
+  GSTREBATE   Decimal?  @default(0, map: "DF__CashBook__GSTREB__257187A8") @db.Decimal(18, 3)
+  PAYABLEAMT  Decimal?  @default(0, map: "DF__CashBook__PAYABL__369C13AA") @db.Decimal(18, 3)
+}
+
+model dbauditlog {
+  ID        Int       @id(map: "PK_dbauditlog") @default(autoincrement())
+  dttable   String?   @db.VarChar(50)
+  dtcol     String?   @db.VarChar(50)
+  org       String?   @db.VarChar(50)
+  chg       String?   @db.VarChar(50)
+  userid    Int?
+  idkey     Int?
+  type      String?   @db.VarChar(50)
+  datestamp DateTime? @default(now(), map: "DF_dbauditlog_datestamp") @db.DateTime
+}
+
+model demand {
+  MEMID         Int      @id(map: "PK_demand")
+  CustID        Int?
+  GNO           Int?
+  Name          String?  @db.VarChar(50)
+  Rank          String?  @db.VarChar(50)
+  Station       String?  @db.VarChar(50)
+  Company       String?  @db.VarChar(50)
+  BillAMT       Decimal? @db.Decimal(38, 2)
+  Paid          Decimal? @db.Decimal(38, 2)
+  Recovered     Decimal? @default(0, map: "DF_demand_Recovered") @db.Decimal(38, 2)
+  Bal_AMT       Decimal? @db.Decimal(38, 2)
+  MonthLimit    Int?
+  PurchaseLimit Int?
+  MEMTYPE       String?  @db.VarChar(50)
+}
+
+model ItemTypeTB {
+  ItemTypeID  Int      @id(map: "PK_ItemTypeTB") @default(autoincrement())
+  ItemType    String?  @db.VarChar(50)
+  ProfitPER   Decimal? @db.Decimal(18, 2)
+  ProfitCalID Int?     @default(1, map: "DF_ItemTypeTB_ProfitCalID")
+  CanteenID   Int?     @default(1, map: "DF_ItemTypeTB_CanteenID")
+  GSTREBATE   Decimal? @default(0, map: "DF__ItemTypeT__GSTRE__23893F36") @db.Decimal(18, 3)
+}
+
+
+model PaytypeTB {
+  ID         Int      @id(map: "PK_PaytypeTB") @default(autoincrement())
+  Paytype    String?  @db.VarChar(20)
+  Bank_SC    Decimal? @db.Decimal(18, 4)
+  Surcharges Decimal? @db.Decimal(18, 4)
+  Total_SC   Decimal? @db.Decimal(18, 4)
+  Remarks    String?  @db.VarChar(50)
+}
+
+model Pitems {
+  PID         Int       @id(map: "PK_Pitems") @default(autoincrement())
+  Pdt         DateTime? @db.DateTime
+  CBID        Int?
+  UID         String?   @db.VarChar(50)
+  BarCode     String?   @db.VarChar(50)
+  ItemName    String?   @db.VarChar(50)
+  ItemTypeID  Int?
+  Price       Decimal?  @default(0, map: "DF_Pitems_Price") @db.Decimal(18, 2)
+  VATPER      Decimal?  @default(0, map: "DF_Pitems_VATPER") @db.Decimal(18, 2)
+  VAT         Decimal?  @default(0, map: "DF_Pitems_VAT") @db.Decimal(18, 2)
+  Pkg         Decimal?  @default(0, map: "DF_Pitems_Pkg") @db.Decimal(18, 2)
+  Transport   Decimal?  @default(0, map: "DF_Pitems_Transport") @db.Decimal(18, 2)
+  ProfitPER   Decimal?  @default(0, map: "DF_Pitems_ProfitPER") @db.Decimal(18, 2)
+  Profit      Decimal?  @default(0, map: "DF_Pitems_Profit") @db.Decimal(18, 2)
+  Bprice      Decimal?  @default(0, map: "DF_Pitems_Bprice") @db.Decimal(18, 2)
+  QTY         Decimal?  @default(0, map: "DF_Pitems_QTY") @db.Decimal(18, 2)
+  Amt         Decimal?  @default(0, map: "DF_Pitems_Amt") @db.Decimal(18, 2)
+  Sprice      Decimal?  @default(0, map: "DF_Pitems_Sprice") @db.Decimal(18, 2)
+  MRP         Decimal?  @default(0, map: "DF_Pitems_MRP") @db.Decimal(18, 2)
+  TransTypeID Int?      @default(0, map: "DF_Pitems_TransType")
+  Orderby     Int?      @default(0, map: "DF_Pitems_Orderby")
+  UserID      Int?
+  Locked      String?   @default("N'N'", map: "DF_Pitems_Locked") @db.NChar(1)
+  Dtstamp     DateTime? @default(now(), map: "DF_Pitems_Dtstamp") @db.DateTime
+  others      Decimal?  @default(0, map: "DF_Pitems_others") @db.Decimal(18, 2)
+  lbl         Int?      @default(0, map: "DF_Pitems_lbl")
+  Pamt        Decimal?  @default(0, map: "DF__Pitems__Pamt__4BAC3F29") @db.Decimal(18, 2)
+  Discount    Decimal?  @default(0, map: "DF_Pitems_Discount") @db.Decimal(18, 2)
+  Remarks     String?   @db.VarChar(50)
+  CGSTP       Decimal?  @default(0, map: "DF_Pitems_CGSTP") @db.Decimal(18, 2)
+  CGST        Decimal?  @default(0, map: "DF_Pitems_CGST") @db.Decimal(18, 2)
+  CGST_A      Decimal?  @default(0, map: "DF_Pitems_CGST_A") @db.Decimal(18, 2)
+  SGSTP       Decimal?  @default(0, map: "DF_Pitems_SGSTP") @db.Decimal(18, 2)
+  SGST        Decimal?  @default(0, map: "DF_Pitems_SGST") @db.Decimal(18, 2)
+  SGST_A      Decimal?  @default(0, map: "DF_Pitems_SGST_A") @db.Decimal(18, 2)
+  VAT_A       Decimal?  @default(0, map: "DF_Pitems_VAT_A") @db.Decimal(18, 2)
+  TAX_S       Decimal?  @default(0, map: "DF_Pitems_TAX_S") @db.Decimal(18, 2)
+  HSN_Code    Int?      @default(0, map: "DF_Pitems_HSN_Code")
+  OLDID       Int?      @default(0, map: "DF_Pitems_OLDID")
+}
+
+model ProfitCal {
+  ID          Int     @id(map: "PK_ProfitCal")
+  Description String? @db.VarChar(50)
+}
+
+model Sitems {
+  SID         Int       @id(map: "PK_Sitems") @default(autoincrement())
+  CBID        Int?
+  PID         Int?
+  QTY         Decimal?  @default(0, map: "DF_Sitems_QTY") @db.Decimal(18, 2)
+  Sprice      Decimal?  @default(0, map: "DF_Sitems_Sprice") @db.Decimal(18, 2)
+  AMT         Decimal?  @default(0, map: "DF_Sitems_AMT") @db.Decimal(18, 2)
+  Bprice      Decimal?  @default(0, map: "DF_Sitems_Bprice") @db.Decimal(18, 2)
+  VAT         Decimal?  @default(0, map: "DF_Sitems_VAT") @db.Decimal(18, 2)
+  TransTypeID Int?
+  datestamp   DateTime? @default(now(), map: "DF_Sitems_datestamp") @db.DateTime
+  VATPER      Decimal?  @default(0, map: "DF_Sitems_VATPER") @db.Decimal(18, 2)
+  MRP         Decimal?  @db.Decimal(18, 2)
+  Remarks     String?   @db.VarChar(50)
+  TAX_S       Decimal?  @default(0, map: "DF_Sitems_TAX_S") @db.Decimal(18, 2)
+  PROFIT      Decimal?  @default(0, map: "DF_Sitems_PROFIT") @db.Decimal(18, 2)
+  GSTREBATE   Decimal?  @default(0, map: "DF__Sitems__GSTREBAT__247D636F") @db.Decimal(18, 3)
+  ItemTypeID  Int?
+}
+
+model smstb {
+  id        Int       @id(map: "PK_smstb") @default(autoincrement())
+  dt        DateTime? @default(now(), map: "DF_smstb_dt") @db.DateTime
+  Descr     String?   @db.VarChar(50)
+  msg       Int?      @default(0, map: "DF_smstb_msg")
+  topUp     Int?      @default(0, map: "DF_smstb_topUp")
+  msgstatus String?   @db.VarChar(50)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tb1 {
+  Billdt   DateTime? @db.DateTime
+  Purchase Decimal?  @db.Decimal(38, 4)
+  Sales    Decimal?  @db.Decimal(38, 4)
+  Bal      Decimal?  @db.Decimal(18, 2)
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model temp1 {
+  ProductID       Int
+  Purchase        Decimal? @db.Decimal(38, 2)
+  Purchase_locked Decimal? @db.Decimal(38, 2)
+  Sold            Decimal? @db.Decimal(38, 2)
+  Name            String?  @db.VarChar(Max)
+  UserID          String   @db.NChar(10)
+  unlock_bal      Decimal? @db.Decimal(38, 2)
+  BPrice          Decimal  @db.Decimal(18, 2)
+  SPrice          Decimal  @db.Decimal(18, 2)
+  MRP             Decimal  @db.Decimal(18, 2)
+  Type            String   @db.NChar(2)
+  Barrcode        String   @db.NChar(30)
+  Profit          Decimal? @db.Decimal(18, 2)
+  VAT             Decimal  @db.Decimal(18, 2)
+  VATPER          Decimal  @db.Decimal(18, 2)
+  ItemTypeID      Int
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model temp2 {
+  ID         Int
+  OderID     String    @db.NChar(10)
+  OrderDT    DateTime  @db.DateTime
+  Firm       String    @db.NChar(30)
+  ProductID  Int
+  SPrice     Decimal   @db.Decimal(18, 2)
+  BPrice     Decimal   @db.Decimal(18, 2)
+  MRP        Decimal   @db.Decimal(18, 2)
+  Qty        Decimal   @db.Decimal(18, 2)
+  AMT        Decimal   @db.Decimal(18, 2)
+  Datestamp  DateTime? @db.DateTime
+  Lock       String?   @db.NChar(1)
+  VAT        Decimal?  @db.Decimal(18, 2)
+  VATPER     Decimal?  @db.Decimal(18, 2)
+  others     Decimal?  @db.Decimal(18, 2)
+  price      Decimal?  @db.Decimal(18, 2)
+  UserID     String    @db.NChar(10)
+  Barrcode   String    @db.NChar(30)
+  Type       String    @db.NChar(2)
+  Profit     Decimal?  @db.Decimal(18, 2)
+  Name       String?   @db.VarChar(Max)
+  ItemTypeID Int
+
+  @@ignore
+}
+
+model TransTypeTB {
+  TransTypeID Int     @id(map: "PK_TransTypeTB") @default(autoincrement())
+  TransType   String? @db.VarChar(20)
+  Transvalue  Int?
+  Trans       String? @db.VarChar(10)
+  CashBook    Int?    @default(1, map: "DF_TransTypeTB_CashBook")
+  Form        String? @db.VarChar(50)
+  Bank        Int?    @default(0, map: "DF_TransTypeTB_Bank")
+}

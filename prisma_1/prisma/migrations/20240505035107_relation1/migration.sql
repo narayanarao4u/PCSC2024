@@ -1,0 +1,33 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[User] ADD [email] NVARCHAR(1000),
+[isAdmin] BIT NOT NULL CONSTRAINT [User_isAdmin_df] DEFAULT 0;
+
+-- CreateTable
+CREATE TABLE [dbo].[Post] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [rating] FLOAT(53) NOT NULL,
+    [rank] DECIMAL(32,16) NOT NULL,
+    [createdAt] DATETIME2 NOT NULL,
+    [authorId] INT NOT NULL,
+    CONSTRAINT [Post_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- AddForeignKey
+ALTER TABLE [dbo].[Post] ADD CONSTRAINT [Post_authorId_fkey] FOREIGN KEY ([authorId]) REFERENCES [dbo].[User]([id]) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

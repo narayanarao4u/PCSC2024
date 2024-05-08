@@ -1,0 +1,28 @@
+@hostName = http://localhost:3000
+
+get {{hostName}}/api/memdata
+
+
+###
+
+post {{hostName}}/api/memdata
+Content-Type: application/json
+
+{
+    "MEMTYPE": "EMP",
+    "GNO": 7501,
+    "CustID": 12193,
+    "Genlno": "IGP 7501",
+    "Name": "P. SEETA RAMANJANEYULU IPS",
+    "Rank": "IGP",
+    "Station": "IGP",
+    "Company": "GHS, HYD",
+    "Status": "W ",
+    "MonthLimit": 0,
+    "PurchaseLimit": 8000,
+    "Phone": "0",
+    "Userlevel": null,
+    "password": null,
+    "Phone1": null,
+    "AnnualLimit": "75000"
+}

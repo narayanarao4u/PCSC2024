@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Imported Data</title>
+  </head>
+  <body>
+    <h1>Imported Data</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Rank</th>
+          <th>Phone</th>
+          <th>Monthly Limit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (const row of data) { %>
+        <tr>
+          <td><%= row.name %></td>
+          <td><%= row.rank %></td>
+          <td><%= row.phone %></td>
+          <td><%= row.monthlyLimit %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </body>
+</html>

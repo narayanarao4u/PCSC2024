@@ -26,6 +26,7 @@ function Memdata() {
     <>
       <div>Memdata</div>
       <MyComponent />
+      <button>TEST</button>
       <div className='grid grid-cols-2'>
         <div>
           <Select options={data} onChange={handleChange} value={memID} />
@@ -36,7 +37,7 @@ function Memdata() {
         </pre>
 
       </div>
-    
+
 
 
     </>

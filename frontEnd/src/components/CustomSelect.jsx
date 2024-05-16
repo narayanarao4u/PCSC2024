@@ -10,9 +10,10 @@ const CustomSelect = ({ data, onFilter }) => {
 
   useEffect(() => {
     setSelectedIndex(-1); // Reset selected index when filter changes
-  }, [filter]);
+  }, []);
 
   const handleInputChange = (e) => {
+    console.log('fired handle input change');
     const value = e.target.value;
     setFilter(value);
     onFilter(value);
@@ -22,17 +23,34 @@ const CustomSelect = ({ data, onFilter }) => {
   const handleKeyDown = (e) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex(prevIndex =>
-        Math.min(prevIndex + 1, data.length - 1)
-      );
+      if (isVisible) {
+        setSelectedIndex(prevIndex =>
+          Math.min(prevIndex + 1, data.length - 1)
+        );
+      }
+
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex(prevIndex =>
-        Math.max(prevIndex - 1, -1)
-      );
+      if (isVisible) {
+        setSelectedIndex(prevIndex =>
+          Math.max(prevIndex - 1, -1)
+        );
+      }
     } else if (e.key === 'Enter' && selectedIndex !== -1) {
+      e.preventDefault();
+
+      var tabEvent = new KeyboardEvent('keydown', {
+        bubbles: true,
+        cancelable: true,
+        key: 'Tab', // Simulate pressing the Tab key
+        keyCode: 9, // Specify the key code for the Tab key
+        which: 9 // Specify the key code for the Tab key
+      });
+      e.target.dispatchEvent(tabEvent);
       // Handle Enter key press
-      console.log("Selected item: ", data[selectedIndex]);
+      setFilter(data[selectedIndex].name);
+
+      // console.log("Selected item: ", data[selectedIndex]);
       setIsVisible(false); // Hide table when Enter is pressed
     }
   };
@@ -43,14 +61,15 @@ const CustomSelect = ({ data, onFilter }) => {
 
   const handleInputBlur = () => {
     setIsVisible(false); // Hide table when input loses focus
-    setFilter
+    setFilter(data[selectedIndex].name);
   };
 
   return (
     <div>
-        <pre>
-
-        </pre>
+      <pre>
+        filter: {JSON.stringify(filter, null, 2)}
+        selectedIndex: {JSON.stringify(selectedIndex, null, 2)}
+      </pre>
       <input
         type="text"
         placeholder="Filter..."

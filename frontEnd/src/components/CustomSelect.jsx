@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CustomSelect.css'; // Import CSS file for styles
 
-const CustomSelect = ({ data, onFilter }) => {
-  const [filter, setFilter] = useState('');
+const CustomSelect = ({ data, onFilter, tableColumns, selectedRow, setselectedRow, displayColumn }) => {
+ 
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isVisible, setIsVisible] = useState(false);
   const tableRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
-    setSelectedIndex(-1); // Reset selected index when filter changes
+    setSelectedIndex(-1); // Reset selected index when filter changes  
   }, []);
 
   const handleInputChange = (e) => {
-    console.log('fired handle input change');
+
     const value = e.target.value;
-    setFilter(value);
+    setselectedRow(value);
     onFilter(value);
     setIsVisible(true); // Show table when input changes
   };
@@ -27,6 +27,8 @@ const CustomSelect = ({ data, onFilter }) => {
         setSelectedIndex(prevIndex =>
           Math.min(prevIndex + 1, data.length - 1)
         );
+      } else {
+        setIsVisible(true);
       }
 
     } else if (e.key === 'ArrowUp') {
@@ -35,20 +37,15 @@ const CustomSelect = ({ data, onFilter }) => {
         setSelectedIndex(prevIndex =>
           Math.max(prevIndex - 1, -1)
         );
+      } else {
+        setIsVisible(true);
       }
     } else if (e.key === 'Enter' && selectedIndex !== -1) {
       e.preventDefault();
 
-      var tabEvent = new KeyboardEvent('keydown', {
-        bubbles: true,
-        cancelable: true,
-        key: 'Tab', // Simulate pressing the Tab key
-        keyCode: 9, // Specify the key code for the Tab key
-        which: 9 // Specify the key code for the Tab key
-      });
-      e.target.dispatchEvent(tabEvent);
+      console.log("Selected item: ", data[selectedIndex]);
       // Handle Enter key press
-      setFilter(data[selectedIndex].name);
+      setselectedRow(data[selectedIndex]);
 
       // console.log("Selected item: ", data[selectedIndex]);
       setIsVisible(false); // Hide table when Enter is pressed
@@ -61,19 +58,18 @@ const CustomSelect = ({ data, onFilter }) => {
 
   const handleInputBlur = () => {
     setIsVisible(false); // Hide table when input loses focus
-    setFilter(data[selectedIndex].name);
+    // setFilter(data[selectedIndex].name);
   };
 
   return (
-    <div>
-      <pre>
-        filter: {JSON.stringify(filter, null, 2)}
+    <div className="inline">
+      <pre>    
         selectedIndex: {JSON.stringify(selectedIndex, null, 2)}
       </pre>
       <input
         type="text"
         placeholder="Filter..."
-        value={filter}
+        value={selectedRow[displayColumn]}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onFocus={handleInputFocus}
@@ -84,20 +80,20 @@ const CustomSelect = ({ data, onFilter }) => {
         <table ref={tableRef} className='customSelectTable'>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
+              {data[0] && tableColumns.map((col, index) => (
+                <th key={index}>{col}</th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {data.map((item, index) => (
               <tr
-                key={item.id}
+                key={index}
                 className={index === selectedIndex ? 'selected' : ''}
               >
-                <td>{item.id}</td>
-                <td>{item.name}</td>
-                <td>{item.email}</td>
+                {tableColumns.map((col, index) => (
+                  <td key={index}>{item[col]}</td>
+                ))}                
               </tr>
             ))}
           </tbody>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './CustomSelect.css'; // Import CSS file for styles
 
 const CustomSelect = ({ data, onFilter, tableColumns, selectedRow, setselectedRow, displayColumn }) => {
- 
+
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isVisible, setIsVisible] = useState(false);
   const tableRef = useRef(null);
@@ -21,7 +21,20 @@ const CustomSelect = ({ data, onFilter, tableColumns, selectedRow, setselectedRo
   };
 
   const handleKeyDown = (e) => {
+
+    const div1 = document.querySelector('.customSelectTable');
+    const selectedrow = document.querySelector(`[data-index = "${selectedIndex}"]`);
+    const rowheight = selectedrow ? selectedrow.offsetTop : 0;
+
+    console.log("rowheight", rowheight);
+
     if (e.key === 'ArrowDown') {
+
+      if (selectedIndex > 8) {
+        div1.scrollTop = rowheight;
+        // selectedrow.style.top = '0px';
+      }
+
       e.preventDefault();
       if (isVisible) {
         setSelectedIndex(prevIndex =>
@@ -32,6 +45,14 @@ const CustomSelect = ({ data, onFilter, tableColumns, selectedRow, setselectedRo
       }
 
     } else if (e.key === 'ArrowUp') {
+      if (selectedIndex > 8) {
+        div1.scrollTop -= 19;
+        // selectedrow.style.bottom = '0px';
+
+      } else {
+        div1.scrollTop = 0;
+      }
+
       e.preventDefault();
       if (isVisible) {
         setSelectedIndex(prevIndex =>
@@ -57,13 +78,13 @@ const CustomSelect = ({ data, onFilter, tableColumns, selectedRow, setselectedRo
   };
 
   const handleInputBlur = () => {
-    setIsVisible(false); // Hide table when input loses focus
-    // setFilter(data[selectedIndex].name);
+    // setIsVisible(false); // Hide table when input loses focus
+
   };
 
   return (
     <div className="inline">
-      <pre>    
+      <pre>
         selectedIndex: {JSON.stringify(selectedIndex, null, 2)}
       </pre>
       <input
@@ -77,27 +98,32 @@ const CustomSelect = ({ data, onFilter, tableColumns, selectedRow, setselectedRo
         ref={inputRef}
       />
       {isVisible && (
-        <table ref={tableRef} className='customSelectTable'>
-          <thead>
-            <tr>
-              {data[0] && tableColumns.map((col, index) => (
-                <th key={index}>{col}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item, index) => (
-              <tr
-                key={index}
-                className={index === selectedIndex ? 'selected' : ''}
-              >
-                {tableColumns.map((col, index) => (
-                  <td key={index}>{item[col]}</td>
-                ))}                
+        <div className='customSelectTable' >
+
+          <table ref={tableRef} >
+            <thead>
+              <tr>
+                {data[0] && tableColumns.map((col, index) => (
+                  <th key={index}>{col}</th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.map((item, index) => (
+                <tr
+                  data-index={index}
+                  key={index}
+                  className={index === selectedIndex ? 'selected' : ''}
+                  onClick={() => setSelectedIndex(index)}
+                >
+                  {tableColumns.map((col, index) => (
+                    <td key={index}>{item[col]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

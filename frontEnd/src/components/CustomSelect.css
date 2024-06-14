@@ -1,9 +1,21 @@
 .selected {
-    background-color: #f0f0f0;
-  }
-  .customSelectTable {
-    position: absolute;
-    z-index: 99;
-    background-color: wheat;
-  }
-  
+  background-color: #f0f0f0;
+  font-weight: bold;
+  position: sticky;
+  /* top: 0; */
+}
+.customSelectTable {
+  position: absolute;
+  z-index: 99;
+  background-color: wheat;
+  height: 200px;
+  overflow: auto;
+}
+
+.customSelectTable tr {
+  cursor: pointer;
+}
+
+.customSelectTable tr:hover {
+  border: 1px solid black;
+}

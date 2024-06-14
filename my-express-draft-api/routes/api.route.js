@@ -29,12 +29,13 @@ router.get("/memdata", async (req, res, next) => {
       take: 10,
     };
 
+    // let findQ2 = { take: 20 };
     let findQ2 = { take: 20 };
     let findQ4 = { where: { Name: "P. SEETA RAMANJANEYULU IPS" } };
     let findQ3 = { select: { Rank: true }, distinct: ["Rank"] };
 
 
-    const data = await prisma.memdata.findMany(findQ2);
+    const data = await prisma.memdata.findMany();
 
     
     // const data = await prisma.memdata.findFirst({});
